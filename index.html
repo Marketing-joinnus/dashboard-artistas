@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Artistas que Perú quiere ver</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<style>
+/* Look Joinnus: fondo azul noche con degradado turquesa, Poppins, acento menta, cifras grandes en blanco */
+:root {
+  --bg: #041a2c; --bg-top-a: #0c4a6a; --bg-top-b: #044d4d;
+  --panel: rgba(255,255,255,.045); --panel-solid: #0a2638; --line: rgba(255,255,255,.09);
+  --fg: #ffffff; --muted: #9fb3c2; --accent: #00e0b1; --accent-ink: #032a24;
+  --bar: rgba(255,255,255,.16); --grid: rgba(255,255,255,.07); --bad: #ff6b6b;
+  --font: "Poppins", "Segoe UI", system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 14px; line-height: 1.5; font-variant-numeric: tabular-nums;
+       background-image: radial-gradient(60rem 26rem at 0% 0%, rgba(12,74,106,.85), transparent 70%), radial-gradient(50rem 24rem at 45% 0%, rgba(4,77,77,.75), transparent 70%);
+       background-repeat: no-repeat; min-height: 100vh;
+       padding: 28px max(16px, env(safe-area-inset-left)) 48px max(16px, env(safe-area-inset-right)); }
+.wrap { max-width: 1180px; margin-inline: auto; display: grid; gap: 20px; }
+.hero { display: grid; gap: 22px; padding-bottom: 8px; }
+.top { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+.brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 500; font-size: 15px; }
+.brand .dot { width: 26px; height: 26px; border-radius: 7px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-weight: 700; font-size: 12px; }
+h1 { font-weight: 700; font-size: clamp(1.7rem, 4.2vw, 2.7rem); line-height: 1.15; margin: 0; letter-spacing: -.01em; text-wrap: balance; max-width: 22ch; }
+h1 .hl { color: var(--accent); }
+#takeaway { margin: 0; color: var(--muted); max-width: 62ch; font-size: 15px; }
+#takeaway b { color: var(--fg); font-weight: 600; }
+.status { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); }
+.status button { font: inherit; font-weight: 600; font-size: 13px; color: var(--accent-ink); background: var(--accent); border: 0; border-radius: 999px; padding: 8px 18px; cursor: pointer; }
+.status button:hover { filter: brightness(1.08); }
+.status button:disabled { opacity: .6; cursor: default; }
+.status button:focus-visible, th button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); gap: 16px 28px; }
+.kpi .num { font-weight: 700; font-size: clamp(1.4rem, 2.8vw, 1.9rem); line-height: 1.15; overflow-wrap: anywhere; }
+.kpi .label { font-size: 13px; color: var(--muted); margin-top: 2px; }
+.kpi .sub { font-size: 11px; color: var(--muted); opacity: .75; }
+.kpi.lead .num { color: var(--accent); }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 22px; min-width: 0; backdrop-filter: blur(4px); }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 16px; }
+h2 { font-weight: 600; font-size: 1.1rem; margin: 0; }
+.note { font-size: 12px; color: var(--muted); margin: 2px 0 18px; }
+.bars { display: grid; gap: 11px; }
+.bar { display: grid; grid-template-columns: minmax(0, 10rem) 1fr auto; align-items: center; gap: 10px; font-size: 13px; }
+.bar .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bar .track { height: 12px; background: rgba(255,255,255,.04); border-radius: 999px; }
+.bar .fill { height: 100%; border-radius: 999px; background: var(--bar); min-width: 4px; transition: width .5s ease-out; }
+.bar.first .fill { background: var(--accent); box-shadow: 0 0 14px rgba(0,224,177,.35); }
+.bar.first .name { font-weight: 600; }
+.bar .val { color: var(--muted); min-width: 5rem; text-align: right; }
+.bar .val b { color: var(--fg); font-weight: 600; }
+.chart { position: relative; min-height: 220px; }
+.tip { position: absolute; pointer-events: none; background: var(--panel-solid); border: 1px solid var(--line); border-radius: 10px;
+       box-shadow: 0 8px 24px rgba(0,0,0,.4); padding: 6px 10px; font-size: 12px; white-space: nowrap; }
+.tip .d { color: var(--muted); }
+.tools { margin-bottom: 10px; }
+.tools input { font: inherit; font-size: 13px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.05); color: var(--fg); width: 100%; max-width: 20rem; }
+.tools input::placeholder { color: var(--muted); }
+.scroll { max-height: 26rem; overflow: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { position: sticky; top: 0; background: var(--panel-solid); text-align: left; font-weight: 500; color: var(--muted); padding: 8px; border-bottom: 1px solid var(--line); }
+th button { all: unset; cursor: pointer; }
+th[aria-sort="ascending"] button::after { content: " ↑"; color: var(--accent); }
+th[aria-sort="descending"] button::after { content: " ↓"; color: var(--accent); }
+td { padding: 7px 8px; border-bottom: 1px solid var(--line); }
+tbody tr:hover td { background: rgba(255,255,255,.03); }
+.r { text-align: right; }
+.msg { padding: 40px 0; text-align: center; color: var(--muted); }
+.msg.err::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--bad); margin-right: 8px; vertical-align: middle; }
+footer { font-size: 12px; color: var(--muted); }
+@media (max-width: 520px) { .hide-sm { display: none; } .bar { grid-template-columns: minmax(0, 7rem) 1fr auto; } }
+@media (prefers-reduced-motion: reduce) { .bar .fill { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <div class="top">
+      <div class="brand"><span class="dot" aria-hidden="true">J</span>Joinnus · Encuesta</div>
+      <div class="status"><span id="updated"></span><button id="refresh" type="button">Actualizar</button></div>
+    </div>
+    <div>
+      <h1>¡Estos son los artistas que <span class="hl">Perú quiere ver</span>!</h1>
+      <p id="takeaway" style="margin-top:10px">Cargando respuestas…</p>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="num" id="k-resp">—</div><div class="label">respuestas</div></div>
+      <div class="kpi"><div class="num" id="k-pers">—</div><div class="label">personas votaron</div><div class="sub">algunas votaron varias veces</div></div>
+      <div class="kpi"><div class="num" id="k-art">—</div><div class="label">artistas distintos</div></div>
+      <div class="kpi lead"><div class="num" id="k-top">—</div><div class="label" id="k-top-sub">artista más pedido</div></div>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="card"><h2>Top 10 artistas</h2><p class="note">Votos por artista, todas las respuestas</p><div class="bars" id="bars-art"></div></div>
+    <div class="card"><h2>Lugares preferidos</h2><p class="note">Dónde preferirían el concierto (top 8)</p><div class="bars" id="bars-lug"></div></div>
+  </section>
+
+  <section class="card">
+    <h2>Respuestas por día</h2><p class="note">Cada barra es un día, desde la primera respuesta</p>
+    <div class="chart" id="chart"></div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>Todos los artistas</h2><p class="note">Busca un artista u ordena por columna</p>
+      <div class="tools"><input id="buscar" type="search" placeholder="Buscar artista…" aria-label="Buscar artista"></div>
+      <div class="scroll"><table id="tbl-art"><thead><tr>
+        <th data-k="artista" aria-sort="none"><button>Artista</button></th>
+        <th data-k="votos" class="r" aria-sort="descending"><button>Votos</button></th>
+        <th data-k="porcentaje" class="r hide-sm" aria-sort="none"><button>% del total</button></th>
+        <th data-k="lugar_top" class="hide-sm" aria-sort="none"><button>Lugar más pedido</button></th>
+      </tr></thead><tbody></tbody></table></div>
+    </div>
+    <div class="card">
+      <h2>Últimas respuestas</h2><p class="note">Las 15 más recientes</p>
+      <div class="scroll"><table id="tbl-ult"><thead><tr><th>Fecha</th><th>Artista</th><th class="hide-sm">Lugar</th></tr></thead><tbody></tbody></table></div>
+    </div>
+  </section>
+
+  <footer>Datos: Google Sheet de la encuesta (publicado como CSV). La página se recarga sola cada 5 minutos; Google puede tardar unos minutos en reflejar respuestas nuevas.</footer>
+</div>
+
+<script>
+// ===== Configuración =====
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTTNLvrh8AtdGn8Czhq1zrfuXfSi184MHOIydhZ-W67YCbIPZb43S9b5rYeX7HYiOLU6vJYHJTmQtfZ/pub?gid=246668890&single=true&output=csv';
+const REFRESCO_MIN = 5;
+
+// ===== Utilidades =====
+const $ = (id) => document.getElementById(id);
+const fmtN = d3.format(',');
+const fmtP = d3.format('.1%');
+const MESES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const fmtDay = (s) => { const [, m, d] = s.split('-').map(Number); return `${d} ${MESES[m - 1]}`; };
+const fmtTs = (s) => { const [d, t] = s.split(' '); return `${fmtDay(d)}, ${(t || '').slice(0, 5)}`; };
+const key = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').trim();
+const nice = (s) => (s === s.toLowerCase() || s === s.toUpperCase()) ? s.toLowerCase().replace(/(^|\s)\S/g, (m) => m.toUpperCase()) : s;
+const mixed = (s) => (s !== s.toLowerCase() && s !== s.toUpperCase()) ? 1 : 0;
+const best = (m, pref) => [...m].sort((a, b) => b[1] - a[1] || pref(b[0]) - pref(a[0]))[0]?.[0] ?? '';
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+
+function parseCSV(text) {
+  const recs = []; let row = [], cell = '', q = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (q) { if (ch === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += ch; }
+    else if (ch === '"') q = true;
+    else if (ch === ',') { row.push(cell); cell = ''; }
+    else if (ch === '\n' || ch === '\r') { if (ch === '\r' && text[i + 1] === '\n') i++; row.push(cell); recs.push(row); row = []; cell = ''; }
+    else cell += ch;
+  }
+  if (cell !== '' || row.length) { row.push(cell); recs.push(row); }
+  const cols = ['submission_id', 'respondent_id', 'submitted_at', 'artista', 'lugar'];
+  return recs.slice(1).filter((r) => r.some((x) => x.trim()))
+    .map((r) => Object.fromEntries(cols.map((c, i) => [c, (r[i] ?? '').trim()])));
+}
+
+// ===== Cálculos =====
+function porArtista(rows) {
+  const g = new Map();
+  for (const r of rows) {
+    if (!r.artista) continue;
+    const k = key(r.artista);
+    if (!g.has(k)) g.set(k, { n: 0, names: new Map(), places: new Map() });
+    const e = g.get(k); e.n++;
+    e.names.set(r.artista, (e.names.get(r.artista) || 0) + 1);
+    if (r.lugar) e.places.set(r.lugar, (e.places.get(r.lugar) || 0) + 1);
+  }
+  const total = rows.filter((r) => r.artista).length;
+  return [...g.values()].map((e) => ({ artista: nice(best(e.names, mixed)), votos: e.n, porcentaje: e.n / total, lugar_top: best(e.places, () => 0) }))
+    .sort((a, b) => b.votos - a.votos || a.artista.localeCompare(b.artista));
+}
+function porLugar(rows) {
+  const g = new Map();
+  for (const r of rows) { if (!r.lugar) continue; const k = key(r.lugar); if (!g.has(k)) g.set(k, { lugar: r.lugar, votos: 0 }); g.get(k).votos++; }
+  const total = rows.filter((r) => r.lugar).length;
+  return [...g.values()].map((e) => ({ ...e, porcentaje: e.votos / total })).sort((a, b) => b.votos - a.votos || a.lugar.localeCompare(b.lugar));
+}
+function porDia(rows) {
+  const c = new Map();
+  for (const r of rows) { const d = r.submitted_at.slice(0, 10); if (d) c.set(d, (c.get(d) || 0) + 1); }
+  const days = [...c.keys()].sort(); if (!days.length) return [];
+  const out = [];
+  for (let t = Date.parse(days[0] + 'T00:00:00Z'); t <= Date.parse(days.at(-1) + 'T00:00:00Z'); t += 864e5) {
+    const d = new Date(t).toISOString().slice(0, 10); out.push({ dia: d, votos: c.get(d) || 0 });
+  }
+  return out;
+}
+
+// ===== Dibujo =====
+let state = null, sortK = 'votos', sortDir = -1;
+
+function drawBars(container, rows, labelKey) {
+  const max = d3.max(rows, (r) => r.votos) || 1;
+  container.replaceChildren(...rows.map((r, i) => {
+    const b = el('div', 'bar' + (i === 0 ? ' first' : ''));
+    const nm = el('span', 'name', r[labelKey]); nm.title = r[labelKey];
+    const tr = el('div', 'track'); const fl = el('div', 'fill'); fl.style.width = (r.votos / max * 100) + '%'; tr.appendChild(fl);
+    const v = el('span', 'val'); v.append(el('b', '', fmtN(r.votos)), ' · ' + fmtP(r.porcentaje));
+    b.append(nm, tr, v); return b;
+  }));
+}
+
+function drawDays() {
+  const chart = $('chart'); chart.replaceChildren();
+  const rows = state?.dias || []; if (!rows.length) return;
+  const W = chart.clientWidth || 600, H = 220;
+  const svg = d3.select(chart).append('svg').attr('width', '100%').attr('height', H).attr('viewBox', `0 0 ${W} ${H}`);
+  const y = d3.scaleLinear([0, d3.max(rows, (r) => r.votos) || 1], [H - 24, 8]).nice();
+  const ticks = y.ticks(4);
+  const probe = svg.append('text').attr('font-size', 12).text(fmtN(d3.max(ticks)));
+  const ml = Math.ceil(probe.node().getComputedTextLength()) + 10; probe.remove();
+  const x = d3.scaleBand(rows.map((r) => r.dia), [ml, W - 4]).padding(0.2);
+  svg.append('g').selectAll('line').data(ticks).join('line').attr('x1', ml).attr('x2', W - 4).attr('y1', y).attr('y2', y).attr('stroke', 'var(--grid)');
+  svg.append('g').selectAll('text').data(ticks).join('text').attr('x', ml - 8).attr('y', y).attr('dy', '0.32em').attr('text-anchor', 'end').attr('font-size', 12).attr('fill', 'var(--muted)').text(fmtN);
+  const step = Math.max(1, Math.ceil(rows.length / Math.max(2, Math.floor((W - ml) / 70))));
+  svg.append('g').selectAll('text').data(rows.filter((_, i) => i % step === 0)).join('text')
+    .attr('x', (r) => x(r.dia) + x.bandwidth() / 2).attr('y', H - 6).attr('text-anchor', 'middle').attr('font-size', 12).attr('fill', 'var(--muted)').text((r) => fmtDay(r.dia));
+  const maxV = d3.max(rows, (r) => r.votos);
+  const tip = el('div', 'tip'); tip.hidden = true; chart.appendChild(tip);
+  svg.append('g').selectAll('rect').data(rows).join('rect')
+    .attr('x', (r) => x(r.dia)).attr('width', x.bandwidth()).attr('y', (r) => y(r.votos)).attr('height', (r) => Math.max(0, y(0) - y(r.votos)))
+    .attr('rx', Math.min(4, x.bandwidth() / 2)).attr('fill', (r) => r.votos === maxV ? 'var(--accent)' : 'var(--bar)')
+    .on('mousemove', (ev, r) => {
+      tip.replaceChildren(el('div', 'd', fmtDay(r.dia)), el('div', '', `${fmtN(r.votos)} respuesta${r.votos === 1 ? '' : 's'}`)); tip.hidden = false;
+      const [px, py] = d3.pointer(ev, chart);
+      tip.style.left = Math.min(Math.max(0, px + 12), chart.clientWidth - tip.offsetWidth) + 'px'; tip.style.top = Math.max(0, py - 44) + 'px';
+    })
+    .on('mouseleave', () => { tip.hidden = true; });
+  svg.append('line').attr('x1', ml).attr('x2', W - 4).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', 'var(--muted)').attr('stroke-opacity', .5);
+}
+
+function drawArtists() {
+  const tb = document.querySelector('#tbl-art tbody'); if (!state) return;
+  const q = key($('buscar').value);
+  const rows = state.artistas.filter((r) => !q || key(r.artista).includes(q)).slice()
+    .sort((a, b) => { const va = a[sortK], vb = b[sortK]; return (typeof va === 'number' ? va - vb : String(va).localeCompare(String(vb))) * sortDir; });
+  document.querySelectorAll('#tbl-art th').forEach((th) => th.setAttribute('aria-sort', th.dataset.k === sortK ? (sortDir > 0 ? 'ascending' : 'descending') : 'none'));
+  tb.replaceChildren(...rows.map((r) => {
+    const tr = el('tr');
+    tr.append(el('td', '', r.artista), el('td', 'r', fmtN(r.votos)), el('td', 'r hide-sm', fmtP(r.porcentaje)), el('td', 'hide-sm', r.lugar_top));
+    return tr;
+  }));
+}
+
+function drawLatest() {
+  const pad = (v) => { const [d, t] = v.split(' '); return d + ' ' + (t || '0:0:0').split(':').map((x) => x.padStart(2, '0')).join(':'); };
+  const rows = state.rows.slice().sort((a, b) => pad(b.submitted_at).localeCompare(pad(a.submitted_at))).slice(0, 15);
+  document.querySelector('#tbl-ult tbody').replaceChildren(...rows.map((r) => {
+    const tr = el('tr'); tr.append(el('td', '', fmtTs(r.submitted_at)), el('td', '', r.artista), el('td', 'hide-sm', r.lugar)); return tr;
+  }));
+}
+
+function render() {
+  const { rows, artistas, lugares } = state;
+  const top = artistas[0], topL = lugares[0];
+  $('k-resp').textContent = fmtN(rows.length);
+  $('k-pers').textContent = fmtN(new Set(rows.map((r) => r.respondent_id).filter(Boolean)).size);
+  $('k-art').textContent = fmtN(artistas.length);
+  $('k-top').textContent = top ? top.artista : '—';
+  $('k-top-sub').textContent = top ? `artista más pedido · ${fmtN(top.votos)} votos` : 'artista más pedido';
+  const tk = $('takeaway'); tk.replaceChildren();
+  if (top) tk.append(el('b', '', top.artista), ` lidera con ${fmtN(top.votos)} votos (${fmtP(top.porcentaje)} del total)` , ...(topL ? [', y el lugar más pedido es ', el('b', '', topL.lugar), '.'] : ['.']));
+  drawBars($('bars-art'), artistas.slice(0, 10), 'artista');
+  drawBars($('bars-lug'), lugares.slice(0, 8), 'lugar');
+  drawDays(); drawArtists(); drawLatest();
+}
+
+function showError() {
+  const msg = 'No se pudieron cargar los datos. Revisa que el Sheet siga publicado en la web.';
+  $('takeaway').textContent = msg;
+  ['bars-art', 'bars-lug', 'chart'].forEach((id) => $(id).replaceChildren(el('div', 'msg err', 'No se pudo cargar')));
+}
+
+// ===== Carga =====
+let lastLoad = null;
+async function load() {
+  const btn = $('refresh'); btn.disabled = true; btn.textContent = 'Actualizando…';
+  try {
+    const res = await fetch(CSV_URL + '&_=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const rows = parseCSV(await res.text());
+    state = { rows, artistas: porArtista(rows), lugares: porLugar(rows), dias: porDia(rows) };
+    lastLoad = new Date(); render(); tickUpdated();
+  } catch (e) {
+    console.error(e); if (!state) showError(); else $('updated').textContent = 'Error al actualizar; mostrando los últimos datos';
+  } finally { btn.disabled = false; btn.textContent = 'Actualizar'; }
+}
+function tickUpdated() {
+  if (!lastLoad) return;
+  const min = Math.floor((Date.now() - lastLoad) / 60000);
+  $('updated').textContent = min < 1 ? 'Actualizado hace un momento' : `Actualizado hace ${min} min`;
+}
+
+$('refresh').addEventListener('click', load);
+$('buscar').addEventListener('input', drawArtists);
+document.querySelectorAll('#tbl-art th button').forEach((b) => b.addEventListener('click', () => {
+  const k = b.parentElement.dataset.k;
+  if (sortK === k) sortDir = -sortDir; else { sortK = k; sortDir = (k === 'votos' || k === 'porcentaje') ? -1 : 1; }
+  drawArtists();
+}));
+let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(drawDays, 150); });
+setInterval(load, REFRESCO_MIN * 60000);
+setInterval(tickUpdated, 30000);
+load();
+</script>
+</body>
+</html>
