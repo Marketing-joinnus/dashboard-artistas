@@ -90,6 +90,20 @@ footer { font-size: 12px; color: var(--muted); }
 .period { font-size: 13px; color: var(--muted); margin-left: auto; }
 .period b { color: var(--accent); font-weight: 600; }
 /* Filtro de artista */
+.alink { color: inherit; text-decoration: none; border-bottom: 1px dashed rgba(255,255,255,.3); cursor: pointer; }
+.alink:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.alink:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.nvar { color: var(--muted); font-size: 11px; font-weight: 400; margin-left: 6px; }
+.btn-buscar { margin-left: auto; font: inherit; font-weight: 600; font-size: 13px; color: var(--accent-ink); background: var(--accent); border: 0; border-radius: 999px; padding: 7px 18px; cursor: pointer; }
+.btn-buscar:disabled { background: rgba(255,255,255,.1); color: var(--muted); cursor: default; }
+.btn-buscar:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.arthint { font-size: 12px; color: var(--accent); margin: 6px 4px 0; }
+.tag.pend { border-style: dashed; background: transparent; }
+.vhead, .vrow { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 16px; }
+.vhead { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+.vrow span:not(:first-child), .vhead span:not(:first-child) { text-align: right; min-width: 4.5rem; }
+.vsum { font-size: 13px; color: var(--muted); margin: 0 0 12px; }
+.vsum b { color: var(--fg); }
 .filters { flex-direction: column; flex-wrap: nowrap; align-items: stretch; }
 .frow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
 .artsel { position: relative; }
@@ -113,7 +127,7 @@ footer { font-size: 12px; color: var(--muted); }
 .opt.all { color: var(--accent); font-weight: 600; grid-template-columns: 18px 1fr; border-bottom: 1px solid var(--line); border-radius: 10px 10px 0 0; margin-bottom: 4px; }
 .dd-empty { padding: 12px; color: var(--muted); font-size: 13px; }
 .vlist { display: grid; gap: 8px; }
-.vrow { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.vrow { font-size: 13px; padding: 7px 0; border-bottom: 1px solid var(--line); }
 .vrow span:last-child { color: var(--muted); }
 .sugs { margin-top: 18px; }
 .sugs h3 { font-size: 13px; font-weight: 600; margin: 0 0 4px; }
@@ -227,7 +241,9 @@ footer { font-size: 12px; color: var(--muted); }
           <span id="tags" class="chips" style="gap:6px"></span>
           <input id="artq" type="text" autocomplete="off" placeholder="Filtrar por artista: escribe un nombre…" role="combobox" aria-expanded="false" aria-controls="artdd" aria-autocomplete="list" aria-label="Filtrar por artista">
           <button type="button" class="clear" id="artclear" hidden>Quitar filtro</button>
+          <button type="button" class="btn-buscar" id="artbuscar" disabled>Buscar</button>
         </div>
+        <p class="arthint" id="arthint" hidden>Presiona <b>Buscar</b> para ver los resultados de tu selección.</p>
         <div class="dropdown" id="artdd" role="listbox" aria-multiselectable="true" hidden></div>
       </div>
       <div class="frow" role="group" aria-label="Filtrar por fechas">
@@ -254,7 +270,9 @@ footer { font-size: 12px; color: var(--muted); }
 
   <section class="grid">
     <div class="card" id="sec-variantes">
-      <h2>Cómo lo escribieron</h2><p class="note">Escrituras incluidas en el filtro y sus votos en el periodo elegido</p>
+      <h2>Nombres agrupados en este artista</h2><p class="note">Todas las formas en que lo escribieron y que se están sumando</p>
+      <p class="vsum" id="vsum"></p>
+      <div class="vhead"><span>Escritura</span><span>Periodo</span><span>Total</span></div>
       <div class="vlist" id="variantes"></div>
       <div class="sugs" id="sugs" hidden>
         <h3>¿Falta alguna escritura?</h3>
@@ -337,7 +355,7 @@ function porArtista(rows) {
     if (r.lugar) e.places.set(r.lugar, (e.places.get(r.lugar) || 0) + 1);
   }
   const total = rows.filter((r) => r.artista).length;
-  return [...g.values()].map((e) => ({ artista: nice(best(e.names, mixed)), votos: e.n, porcentaje: e.n / total, lugar_top: best(e.places, () => 0) }))
+  return [...g].map(([k, e]) => ({ k, artista: nice(best(e.names, mixed)), nvar: e.names.size, votos: e.n, porcentaje: e.n / total, lugar_top: best(e.places, () => 0) }))
     .sort((a, b) => b.votos - a.votos || a.artista.localeCompare(b.artista));
 }
 function porLugar(rows) {
@@ -366,7 +384,9 @@ function drawBars(container, rows, labelKey) {
   const max = d3.max(rows, (r) => r.votos) || 1;
   container.replaceChildren(...rows.map((r, i) => {
     const b = el('div', 'bar' + (i === 0 ? ' first' : ''));
-    const nm = el('span', 'name', r[labelKey]); nm.title = r[labelKey];
+    const nm = el('span', 'name'); nm.title = r[labelKey];
+    if (r.k !== undefined) { nm.append(linkArtista(r.k, r[labelKey])); if (r.nvar > 1) nm.append(el('span', 'nvar', `${r.nvar} escrituras`)); }
+    else nm.textContent = r[labelKey];
     const tr = el('div', 'track'); const fl = el('div', 'fill'); fl.style.width = (r.votos / max * 100) + '%'; tr.appendChild(fl);
     const v = el('span', 'val'); v.append(el('b', '', fmtN(r.votos)), ' · ' + fmtP(r.porcentaje));
     b.append(nm, tr, v); return b;
@@ -410,7 +430,8 @@ function drawArtists() {
   document.querySelectorAll('#tbl-art th').forEach((th) => th.setAttribute('aria-sort', th.dataset.k === sortK ? (sortDir > 0 ? 'ascending' : 'descending') : 'none'));
   tb.replaceChildren(...rows.map((r) => {
     const tr = el('tr');
-    tr.append(el('td', '', r.artista), el('td', 'r', fmtN(r.votos)), el('td', 'r hide-sm', fmtP(r.porcentaje)), el('td', 'hide-sm', r.lugar_top));
+    const c = el('td'); c.append(linkArtista(r.k, r.artista)); if (r.nvar > 1) c.append(el('span', 'nvar', `${r.nvar} escrituras`));
+    tr.append(c, el('td', 'r', fmtN(r.votos)), el('td', 'r hide-sm', fmtP(r.porcentaje)), el('td', 'hide-sm', r.lugar_top));
     return tr;
   }));
 }
@@ -419,7 +440,7 @@ function drawLatest() {
   const pad = (v) => { const [d, t] = v.split(' '); return d + ' ' + (t || '0:0:0').split(':').map((x) => x.padStart(2, '0')).join(':'); };
   const rows = state.rows.slice().sort((a, b) => pad(b.submitted_at).localeCompare(pad(a.submitted_at))).slice(0, 15);
   document.querySelector('#tbl-ult tbody').replaceChildren(...rows.map((r) => {
-    const tr = el('tr'); tr.append(el('td', '', fmtTs(r.submitted_at)), el('td', '', r.artista), el('td', 'hide-sm', r.lugar)); return tr;
+    const tr = el('tr'); const c = el('td'); c.append(linkArtista(key(r.artista), r.artista)); tr.append(el('td', '', fmtTs(r.submitted_at)), c, el('td', 'hide-sm', r.lugar)); return tr;
   }));
 }
 
@@ -577,15 +598,36 @@ function nombreSel() {
   return nice(best(m, mixed)) || 'el artista';
 }
 
+// --- Selección pendiente (se arma en la lista) y selección aplicada (al presionar Buscar) ---
+let pend = new Set();
+const mismaSeleccion = (a, b) => a.size === b.size && [...a].every((x) => b.has(x));
+
+// Todas las escrituras que se agrupan bajo un mismo artista (mismo nombre sin mayúsculas, tildes ni espacios)
+const escriturasDe = (k) => variantes().filter((o) => key(o.v) === k).map((o) => o.v);
+function abrirArtista(k) {
+  const vs = escriturasDe(k); if (!vs.length) return;
+  selArt = new Set(vs); pend = new Set(vs); $('artq').value = ''; abrirDD(false);
+  drawTags(); guardarHash(); aplicarFiltro();
+  window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+}
+function linkArtista(k, texto) {
+  const a = el('a', 'alink', texto);
+  a.href = '#artista=' + escriturasDe(k).map(encodeURIComponent).join('|');
+  a.title = 'Ver detalle de ' + texto;
+  a.addEventListener('click', (e) => { e.preventDefault(); abrirArtista(k); });
+  return a;
+}
+
 function opciones(q) {
-  const qk = key(q); if (!qk) return [];
+  const qk = key(q);
+  const ord = (a, b) => b.n - a.n || a.v.localeCompare(b.v);
+  if (!qk) return variantes().sort(ord); // listado completo
   const exact = [], fuzzy = [];
   for (const o of variantes()) {
     if (key(o.v).includes(qk)) exact.push(o);
     else if (parecido(q, o.v)) fuzzy.push({ ...o, fuzzy: true });
   }
-  const ord = (a, b) => b.n - a.n || a.v.localeCompare(b.v);
-  return [...exact.sort(ord), ...fuzzy.sort(ord)].slice(0, 30);
+  return [...exact.sort(ord), ...fuzzy.sort(ord)];
 }
 
 function abrirDD(abierto) { $('artdd').hidden = !abierto; $('artq').setAttribute('aria-expanded', String(abierto)); }
@@ -593,22 +635,26 @@ function abrirDD(abierto) { $('artdd').hidden = !abierto; $('artq').setAttribute
 function drawDD() {
   const q = $('artq').value; const dd = $('artdd');
   const items = opciones(q);
-  if (!q.trim()) { abrirDD(false); return; }
   ddItems = [];
   const nodes = [];
-  const libres = items.filter((o) => !selArt.has(o.v));
-  if (libres.length > 1) {
+  if (items.length) {
+    const todos = items.every((o) => pend.has(o.v));
+    const filtrado = !!q.trim();
     const all = el('div', 'opt all'); all.setAttribute('role', 'option'); all.id = 'opt-all';
-    all.append(el('span', '', '+'), el('span', '', `Seleccionar todas las coincidencias (${libres.length})`));
-    all.addEventListener('mousedown', (e) => { e.preventDefault(); libres.forEach((o) => selArt.add(o.v)); cambioSel(true); });
-    nodes.push(all); ddItems.push({ el: all, act: () => { libres.forEach((o) => selArt.add(o.v)); cambioSel(true); } });
+    const txt = todos
+      ? (filtrado ? `Quitar todos los resultados (${items.length})` : `Quitar todos (${items.length})`)
+      : (filtrado ? `Seleccionar todos los resultados (${items.length})` : `Seleccionar todos (${items.length})`);
+    all.append(el('span', '', todos ? '−' : '+'), el('span', '', txt));
+    const act = () => { items.forEach((o) => todos ? pend.delete(o.v) : pend.add(o.v)); cambioPend(); };
+    all.addEventListener('mousedown', (e) => { e.preventDefault(); act(); });
+    nodes.push(all); ddItems.push({ el: all, act });
   }
   items.forEach((o, i) => {
-    const on = selArt.has(o.v);
+    const on = pend.has(o.v);
     const row = el('div', 'opt' + (on ? ' on' : '')); row.setAttribute('role', 'option'); row.id = 'opt-' + i; row.setAttribute('aria-checked', String(on));
     const nm = el('span'); nm.append(o.v); if (o.fuzzy) nm.append(el('span', 'hint', 'parecido'));
     row.append(el('span', 'box', on ? '✓' : ''), nm, el('span', 'cnt', `${fmtN(o.n)} voto${o.n === 1 ? '' : 's'}`));
-    const act = () => { selArt.has(o.v) ? selArt.delete(o.v) : selArt.add(o.v); cambioSel(false); };
+    const act = () => { pend.has(o.v) ? pend.delete(o.v) : pend.add(o.v); cambioPend(); };
     row.addEventListener('mousedown', (e) => { e.preventDefault(); act(); });
     nodes.push(row); ddItems.push({ el: row, act });
   });
@@ -625,21 +671,31 @@ function marcarActivo() {
 
 function drawTags() {
   const box = $('tags');
-  box.replaceChildren(...[...selArt].map((v) => {
-    const t = el('span', 'tag'); t.append(v);
+  box.replaceChildren(...[...pend].map((v) => {
+    const t = el('span', 'tag' + (selArt.has(v) ? '' : ' pend')); t.append(v);
     const x = el('button', '', '×'); x.type = 'button'; x.setAttribute('aria-label', 'Quitar ' + v);
-    x.addEventListener('click', (e) => { e.stopPropagation(); selArt.delete(v); cambioSel(false); });
+    x.addEventListener('click', (e) => { e.stopPropagation(); pend.delete(v); cambioPend(); });
     t.append(x); return t;
   }));
-  $('artclear').hidden = selArt.size === 0;
-  $('artq').placeholder = selArt.size ? 'Agregar otra escritura…' : 'Filtrar por artista: escribe un nombre…';
+  const cambios = !mismaSeleccion(pend, selArt);
+  $('artbuscar').disabled = !cambios;
+  $('arthint').hidden = !cambios;
+  $('artclear').hidden = pend.size === 0 && selArt.size === 0;
+  $('artq').placeholder = pend.size ? 'Agregar otra escritura…' : 'Filtrar por artista: escribe un nombre…';
 }
 
 function drawVariantes() {
-  const cnt = new Map(); for (const r of state.dateRows) if (selArt.has(r.artista)) cnt.set(r.artista, (cnt.get(r.artista) || 0) + 1);
-  $('variantes').replaceChildren(...[...selArt].sort((a, b) => (cnt.get(b) || 0) - (cnt.get(a) || 0)).map((v) => {
-    const r = el('div', 'vrow'); const n = cnt.get(v) || 0;
-    r.append(el('span', '', v), el('span', '', `${fmtN(n)} voto${n === 1 ? '' : 's'}`)); return r;
+  const per = new Map(), tot = new Map();
+  for (const r of state.dateRows) if (selArt.has(r.artista)) per.set(r.artista, (per.get(r.artista) || 0) + 1);
+  for (const r of allRows) if (selArt.has(r.artista)) tot.set(r.artista, (tot.get(r.artista) || 0) + 1);
+  const lista = [...selArt].sort((a, b) => (tot.get(b) || 0) - (tot.get(a) || 0) || a.localeCompare(b));
+  const sumP = lista.reduce((t, v) => t + (per.get(v) || 0), 0), sumT = lista.reduce((t, v) => t + (tot.get(v) || 0), 0);
+  const vs = $('vsum'); vs.replaceChildren();
+  vs.append('Se suman ', el('b', '', `${lista.length} escritura${lista.length === 1 ? '' : 's'}`), ' bajo ', el('b', '', nombreSel()), `: ${fmtN(sumP)} voto${sumP === 1 ? '' : 's'} en el periodo y ${fmtN(sumT)} en total.`);
+  $('variantes').replaceChildren(...lista.map((v) => {
+    const r = el('div', 'vrow');
+    r.append(el('span', '', v), el('span', '', fmtN(per.get(v) || 0)), el('span', '', fmtN(tot.get(v) || 0)));
+    return r;
   }));
 }
 function drawSugerencias() {
@@ -648,7 +704,7 @@ function drawSugerencias() {
   $('sugs').hidden = !sug.length;
   $('sugchips').replaceChildren(...sug.map((o) => {
     const b = el('button', '', `+ ${o.v} (${o.n})`); b.type = 'button';
-    b.addEventListener('click', () => { selArt.add(o.v); cambioSel(false); });
+    b.addEventListener('click', () => { selArt.add(o.v); pend.add(o.v); drawTags(); guardarHash(); aplicarFiltro(); });
     return b;
   }));
 }
@@ -660,26 +716,31 @@ function guardarHash() {
 function leerHash() {
   const m = location.hash.match(/^#artista=(.*)$/);
   if (m) selArt = new Set(m[1].split('|').map((x) => { try { return decodeURIComponent(x); } catch (e) { return x; } }).filter(Boolean));
+  pend = new Set(selArt);
 }
 
-function cambioSel(limpiar) {
-  if (limpiar) { $('artq').value = ''; abrirDD(false); }
+// Cambios en la lista: solo actualizan la selección pendiente (no consultan nada)
+function cambioPend() { drawTags(); if (!$('artdd').hidden) drawDD(); }
+// Botón Buscar: aplica la selección y recién ahí filtra el dashboard
+function buscar() {
+  selArt = new Set(pend); $('artq').value = ''; abrirDD(false);
   drawTags(); guardarHash(); aplicarFiltro();
-  if (!$('artdd').hidden) drawDD();
 }
 
 $('artq').addEventListener('input', () => { ddActive = -1; drawDD(); });
-$('artq').addEventListener('focus', () => { if ($('artq').value.trim()) drawDD(); });
-$('artq').addEventListener('blur', () => setTimeout(() => abrirDD(false), 120));
+$('artq').addEventListener('focus', () => drawDD());
+$('artq').addEventListener('blur', () => setTimeout(() => abrirDD(false), 150));
 $('artq').addEventListener('keydown', (e) => {
   if (e.key === 'ArrowDown') { e.preventDefault(); if ($('artdd').hidden) drawDD(); ddActive = Math.min(ddItems.length - 1, ddActive + 1); marcarActivo(); }
   else if (e.key === 'ArrowUp') { e.preventDefault(); ddActive = Math.max(0, ddActive - 1); marcarActivo(); }
-  else if (e.key === 'Enter') { e.preventDefault(); const it = ddItems[ddActive] || ddItems.find((x) => x.el.id !== 'opt-all'); if (it) it.act(); }
+  else if (e.key === 'Enter') { e.preventDefault(); const it = ddItems[ddActive]; if (it && !$('artdd').hidden) it.act(); else if (!$('artbuscar').disabled) buscar(); }
   else if (e.key === 'Escape') { abrirDD(false); }
-  else if (e.key === 'Backspace' && !$('artq').value && selArt.size) { selArt.delete([...selArt].at(-1)); cambioSel(false); }
+  else if (e.key === 'Backspace' && !$('artq').value && pend.size) { pend.delete([...pend].at(-1)); cambioPend(); }
 });
 $('artbox').addEventListener('click', () => $('artq').focus());
-$('artclear').addEventListener('click', (e) => { e.stopPropagation(); selArt.clear(); $('artq').value = ''; cambioSel(true); });
+$('artbuscar').addEventListener('mousedown', (e) => e.preventDefault());
+$('artbuscar').addEventListener('click', (e) => { e.stopPropagation(); buscar(); });
+$('artclear').addEventListener('click', (e) => { e.stopPropagation(); selArt.clear(); pend.clear(); $('artq').value = ''; abrirDD(false); drawTags(); guardarHash(); aplicarFiltro(); });
 leerHash(); drawTags();
 
 // ===== Ficha del artista (Wikidata + Wikipedia + Deezer) =====
