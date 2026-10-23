@@ -89,6 +89,69 @@ footer { font-size: 12px; color: var(--muted); }
 .range input { font: inherit; font-size: 13px; color: var(--fg); background: rgba(255,255,255,.05); border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; color-scheme: dark; }
 .period { font-size: 13px; color: var(--muted); margin-left: auto; }
 .period b { color: var(--accent); font-weight: 600; }
+/* Filtro de artista */
+.filters { flex-direction: column; align-items: stretch; }
+.frow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+.artsel { position: relative; }
+.artbox { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.05); cursor: text; }
+.artbox:focus-within { border-color: var(--accent); }
+.artbox svg { flex: none; color: var(--muted); }
+.artbox input { flex: 1 1 12rem; min-width: 8rem; font: inherit; font-size: 14px; color: var(--fg); background: transparent; border: 0; outline: none; padding: 4px 2px; }
+.artbox input::placeholder { color: var(--muted); }
+.tag { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; background: rgba(0,224,177,.14); color: var(--fg); border: 1px solid rgba(0,224,177,.45); border-radius: 999px; padding: 3px 4px 3px 10px; }
+.tag button { all: unset; cursor: pointer; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; color: var(--muted); font-size: 14px; line-height: 1; }
+.tag button:hover, .tag button:focus-visible { background: rgba(255,255,255,.12); color: var(--fg); }
+.clear { font: inherit; font-size: 12px; color: var(--muted); background: none; border: 0; cursor: pointer; text-decoration: underline; padding: 4px; }
+.clear:hover { color: var(--fg); }
+.dropdown { position: absolute; z-index: 20; left: 0; right: 0; top: calc(100% + 6px); max-height: 20rem; overflow: auto; background: var(--panel-solid); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 12px 32px rgba(0,0,0,.45); padding: 6px; }
+.opt { display: grid; grid-template-columns: 18px 1fr auto; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 10px; cursor: pointer; font-size: 13px; }
+.opt[aria-selected="true"], .opt:hover { background: rgba(255,255,255,.06); }
+.opt .box { width: 16px; height: 16px; border-radius: 5px; border: 1.5px solid var(--muted); display: grid; place-items: center; font-size: 11px; color: var(--accent-ink); }
+.opt.on .box { background: var(--accent); border-color: var(--accent); }
+.opt .cnt { color: var(--muted); font-size: 12px; }
+.opt .hint { color: var(--accent); font-size: 11px; margin-left: 6px; }
+.opt.all { color: var(--accent); font-weight: 600; grid-template-columns: 18px 1fr; border-bottom: 1px solid var(--line); border-radius: 10px 10px 0 0; margin-bottom: 4px; }
+.dd-empty { padding: 12px; color: var(--muted); font-size: 13px; }
+.vlist { display: grid; gap: 8px; }
+.vrow { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.vrow span:last-child { color: var(--muted); }
+.sugs { margin-top: 18px; }
+.sugs h3 { font-size: 13px; font-weight: 600; margin: 0 0 4px; }
+.sugs p { font-size: 12px; color: var(--muted); margin: 0 0 10px; }
+.sugs .chips button { font: inherit; font-size: 12px; color: var(--fg); background: transparent; border: 1px dashed rgba(0,224,177,.6); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+.sugs .chips button:hover { background: rgba(0,224,177,.12); }
+.mode-artista #sec-top, .mode-artista #sec-tablas { display: none; }
+/* Ficha del artista */
+#sec-ficha { display: none; }
+.mode-artista #sec-ficha { display: block; }
+.ficha { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 360px); gap: 24px; align-items: start; }
+@media (max-width: 860px) { .ficha { grid-template-columns: 1fr; } }
+.fi-head { display: flex; gap: 18px; align-items: flex-start; }
+.fi-foto { width: 104px; height: 104px; border-radius: 50%; object-fit: cover; flex: none; background: rgba(255,255,255,.06); border: 2px solid var(--accent); }
+.fi-foto.vacia { display: grid; place-items: center; font-weight: 700; font-size: 34px; color: var(--accent); }
+.fi-nombre { font-weight: 700; font-size: 1.5rem; line-height: 1.2; margin: 0; }
+.fi-desc { color: var(--muted); font-size: 13px; margin: 2px 0 0; }
+.fi-texto { font-size: 14px; line-height: 1.6; margin: 16px 0 0; max-width: 70ch; }
+.fi-datos { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.fi-dato { font-size: 12px; background: rgba(255,255,255,.06); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; }
+.fi-dato b { color: var(--accent); font-weight: 600; }
+.fi-redes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.fi-red { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: var(--fg); text-decoration: none; background: rgba(255,255,255,.05); border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px; }
+.fi-red:hover { border-color: var(--accent); }
+.fi-red:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.fi-red { padding: 5px 14px 5px 5px; }
+.fi-red .ico { width: 28px; height: 28px; border-radius: 50%; background: var(--c, var(--accent)); display: grid; place-items: center; flex: none; }
+.fi-red .ico svg { width: 15px; height: 15px; }
+.fi-red .ext { width: 12px; height: 12px; opacity: .6; }
+.fi-spotify iframe { width: 100%; height: 352px; border: 0; border-radius: 12px; display: block; }
+.fi-alt { margin-top: 16px; font-size: 12px; color: var(--muted); }
+.fi-alt button { font: inherit; font-size: 12px; color: var(--fg); background: none; border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; margin: 4px 6px 0 0; cursor: pointer; }
+.fi-alt button:hover { border-color: var(--accent); }
+.fi-fuente { margin-top: 14px; font-size: 11px; color: var(--muted); }
+.fi-fuente a { color: var(--muted); }
+.fi-load { color: var(--muted); padding: 24px 0; }
+#sec-variantes { display: none; }
+.mode-artista #sec-variantes { display: block; }
 @media (max-width: 720px) { .period { margin-left: 0; width: 100%; } }
 @media (max-width: 520px) { .hide-sm { display: none; } .bar { grid-template-columns: minmax(0, 7rem) 1fr auto; } }
 @media (prefers-reduced-motion: reduce) { .bar .fill { transition: none; } }
@@ -105,24 +168,49 @@ footer { font-size: 12px; color: var(--muted); }
       <h1>¡Estos son los artistas que <span class="hl">Perú quiere ver</span>!</h1>
       <p id="takeaway" style="margin-top:10px">Cargando respuestas…</p>
     </div>
-    <div class="filters" id="filtros" role="group" aria-label="Filtrar por fechas">
-      <div class="chips" id="presets"></div>
-      <div class="range">
-        <label for="desde">Desde</label><input type="date" id="desde">
-        <label for="hasta">Hasta</label><input type="date" id="hasta">
+    <div class="filters" id="filtros">
+      <div class="artsel" id="artsel">
+        <div class="artbox" id="artbox">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <span id="tags" class="chips" style="gap:6px"></span>
+          <input id="artq" type="text" autocomplete="off" placeholder="Filtrar por artista: escribe un nombre…" role="combobox" aria-expanded="false" aria-controls="artdd" aria-autocomplete="list" aria-label="Filtrar por artista">
+          <button type="button" class="clear" id="artclear" hidden>Quitar filtro</button>
+        </div>
+        <div class="dropdown" id="artdd" role="listbox" aria-multiselectable="true" hidden></div>
       </div>
-      <div class="period" id="periodo"></div>
+      <div class="frow" role="group" aria-label="Filtrar por fechas">
+        <div class="chips" id="presets"></div>
+        <div class="range">
+          <label for="desde">Desde</label><input type="date" id="desde">
+          <label for="hasta">Hasta</label><input type="date" id="hasta">
+        </div>
+        <div class="period" id="periodo"></div>
+      </div>
     </div>
     <div class="kpis">
-      <div class="kpi"><div class="num" id="k-resp">—</div><div class="label">respuestas</div></div>
-      <div class="kpi"><div class="num" id="k-pers">—</div><div class="label">personas votaron</div><div class="sub">algunas votaron varias veces</div></div>
-      <div class="kpi"><div class="num" id="k-art">—</div><div class="label">artistas distintos</div></div>
+      <div class="kpi"><div class="num" id="k-resp">—</div><div class="label" id="l-resp">respuestas</div></div>
+      <div class="kpi"><div class="num" id="k-pers">—</div><div class="label">personas votaron</div><div class="sub" id="s-pers">algunas votaron varias veces</div></div>
+      <div class="kpi"><div class="num" id="k-art">—</div><div class="label" id="l-art">artistas distintos</div></div>
       <div class="kpi lead"><div class="num" id="k-top">—</div><div class="label" id="k-top-sub">artista más pedido</div></div>
     </div>
   </section>
 
+  <section class="card" id="sec-ficha">
+    <h2>Sobre el artista</h2><p class="note">Información pública de Wikipedia, Wikidata y Deezer</p>
+    <div id="ficha"><div class="fi-load">Buscando información…</div></div>
+  </section>
+
   <section class="grid">
-    <div class="card"><h2>Top 10 artistas</h2><p class="note">Votos por artista en el periodo elegido</p><div class="bars" id="bars-art"></div></div>
+    <div class="card" id="sec-variantes">
+      <h2>Cómo lo escribieron</h2><p class="note">Escrituras incluidas en el filtro y sus votos en el periodo elegido</p>
+      <div class="vlist" id="variantes"></div>
+      <div class="sugs" id="sugs" hidden>
+        <h3>¿Falta alguna escritura?</h3>
+        <p>Estas escrituras se parecen a tu selección y no están incluidas. Haz clic para sumarlas.</p>
+        <div class="chips" id="sugchips"></div>
+      </div>
+    </div>
+    <div class="card" id="sec-top"><h2>Top 10 artistas</h2><p class="note">Votos por artista en el periodo elegido</p><div class="bars" id="bars-art"></div></div>
     <div class="card"><h2>Lugares preferidos</h2><p class="note">Dónde preferirían el concierto (top 8) en el periodo elegido</p><div class="bars" id="bars-lug"></div></div>
   </section>
 
@@ -131,7 +219,7 @@ footer { font-size: 12px; color: var(--muted); }
     <div class="chart" id="chart"></div>
   </section>
 
-  <section class="grid">
+  <section class="grid" id="sec-tablas">
     <div class="card">
       <h2>Todos los artistas</h2><p class="note">Busca un artista u ordena por columna</p>
       <div class="tools"><input id="buscar" type="search" placeholder="Buscar artista…" aria-label="Buscar artista"></div>
@@ -148,7 +236,7 @@ footer { font-size: 12px; color: var(--muted); }
     </div>
   </section>
 
-  <footer>Datos: Google Sheet de la encuesta (publicado como CSV). La página se recarga sola cada 5 minutos; Google puede tardar unos minutos en reflejar respuestas nuevas.</footer>
+  <footer>Datos: Google Sheet de la encuesta (publicado como CSV). Ficha del artista: Wikipedia, Wikidata y Deezer. La página se recarga sola cada 5 minutos; Google puede tardar unos minutos en reflejar respuestas nuevas.</footer>
 </div>
 
 <script>
@@ -239,7 +327,7 @@ function drawDays() {
   const W = chart.clientWidth || 600, H = 220;
   const svg = d3.select(chart).append('svg').attr('width', '100%').attr('height', H).attr('viewBox', `0 0 ${W} ${H}`);
   const y = d3.scaleLinear([0, d3.max(rows, (r) => r.votos) || 1], [H - 24, 8]).nice();
-  const ticks = y.ticks(4);
+  const ticks = y.ticks(Math.min(4, y.domain()[1])).filter(Number.isInteger);
   const probe = svg.append('text').attr('font-size', 12).text(fmtN(d3.max(ticks)));
   const ml = Math.ceil(probe.node().getComputedTextLength()) + 10; probe.remove();
   const x = d3.scaleBand(rows.map((r) => r.dia), [ml, W - 4]).padding(0.2);
@@ -284,14 +372,44 @@ function drawLatest() {
 }
 
 function render() {
-  const { rows, artistas, lugares } = state;
-  const top = artistas[0], topL = lugares[0];
-  $('k-resp').textContent = fmtN(rows.length);
+  const { rows, artistas, lugares, dateRows } = state;
+  const modo = selArt.size > 0;
+  document.body.classList.toggle('mode-artista', modo);
+  const tk = $('takeaway'); tk.replaceChildren();
   $('k-pers').textContent = fmtN(new Set(rows.map((r) => r.respondent_id).filter(Boolean)).size);
+  $('k-resp').textContent = fmtN(rows.length);
+  $('s-pers').textContent = modo ? 'votaron por este artista' : 'algunas votaron varias veces';
+
+  if (modo) {
+    const nombre = nombreSel();
+    // Ranking: la selección cuenta como un solo artista frente al resto
+    const MARCA = '⁣sel';
+    const merged = porArtista(dateRows.map((r) => selArt.has(r.artista) ? { ...r, artista: MARCA } : r));
+    const pos = merged.findIndex((x) => x.artista === MARCA);
+    $('l-resp').textContent = 'votos para ' + nombre;
+    $('k-art').textContent = dateRows.length ? fmtP(rows.length / dateRows.length) : '—';
+    $('l-art').textContent = 'del total de votos del periodo';
+    $('k-top').textContent = pos >= 0 ? '#' + (pos + 1) : '—';
+    $('k-top-sub').textContent = pos >= 0 ? `puesto entre ${fmtN(merged.length)} artistas` : 'sin votos en el periodo';
+    drawVariantes(); drawSugerencias(); cargarFicha(nombre);
+    if (!rows.length) {
+      tk.append(el('b', '', nombre), ' no tiene votos en el periodo elegido. Prueba con otro rango de fechas.');
+      $('bars-lug').replaceChildren(el('div', 'msg', 'Sin votos en este periodo'));
+      drawDays(); return;
+    }
+    const topL = lugares[0];
+    tk.append(el('b', '', nombre), ` suma ${fmtN(rows.length)} voto${rows.length === 1 ? '' : 's'} (${fmtP(rows.length / dateRows.length)} del periodo) y está en el puesto #${pos + 1}`,
+      ...(topL ? ['. Su lugar más pedido es ', el('b', '', topL.lugar), '.'] : ['.']));
+    drawBars($('bars-lug'), lugares.slice(0, 8), 'lugar');
+    drawDays(); return;
+  }
+
+  const top = artistas[0], topL = lugares[0];
+  $('l-resp').textContent = 'respuestas';
   $('k-art').textContent = fmtN(artistas.length);
+  $('l-art').textContent = 'artistas distintos';
   $('k-top').textContent = top ? top.artista : '—';
   $('k-top-sub').textContent = top ? `artista más pedido · ${fmtN(top.votos)} votos` : 'artista más pedido';
-  const tk = $('takeaway'); tk.replaceChildren();
   if (!rows.length) {
     tk.textContent = 'No hay respuestas en este periodo. Prueba con otro rango de fechas.';
     ['bars-art', 'bars-lug'].forEach((id) => $(id).replaceChildren(el('div', 'msg', 'Sin respuestas en este periodo')));
@@ -341,8 +459,9 @@ function buildPresets() {
 
 function aplicarFiltro() {
   const { desde, hasta } = filtro;
-  const rows = allRows.filter((r) => { const d = r.submitted_at.slice(0, 10); return (!desde || d >= desde) && (!hasta || d <= hasta); });
-  state = { rows, artistas: porArtista(rows), lugares: porLugar(rows), dias: porDia(rows, desde, hasta) };
+  const dateRows = allRows.filter((r) => { const d = r.submitted_at.slice(0, 10); return (!desde || d >= desde) && (!hasta || d <= hasta); });
+  const rows = selArt.size ? dateRows.filter((r) => selArt.has(r.artista)) : dateRows;
+  state = { dateRows, rows, artistas: porArtista(rows), lugares: porLugar(rows), dias: porDia(rows, desde, hasta) };
   if (document.activeElement !== $('desde')) $('desde').value = desde || '';
   if (document.activeElement !== $('hasta')) $('hasta').value = hasta || '';
   const per = $('periodo'); per.replaceChildren();
@@ -361,6 +480,312 @@ function cambioRango(ev) {
 }
 $('desde').addEventListener('change', cambioRango);
 $('hasta').addEventListener('change', cambioRango);
+
+// ===== Filtro de artista =====
+let selArt = new Set();       // escrituras exactas seleccionadas
+let ddItems = [], ddActive = -1;
+
+// Distancia de edición (para encontrar nombres mal escritos)
+function lev(a, b) {
+  if (a === b) return 0; if (!a.length) return b.length; if (!b.length) return a.length;
+  let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    const cur = [i];
+    for (let j = 1; j <= b.length; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    prev = cur;
+  }
+  return prev[b.length];
+}
+const compacto = (s) => key(s).replace(/[^a-z0-9]/g, '');
+// ¿El texto escrito se parece a esta escritura? (tolera 1–2 letras distintas)
+function parecido(q, v) {
+  const a = compacto(q), b = compacto(v); if (a.length < 4) return false;
+  const tol = a.length <= 6 ? 1 : 2;
+  if (Math.abs(a.length - b.length) <= tol && lev(a, b) <= tol) return true;
+  for (let i = 0; i + a.length <= b.length + tol; i++) if (lev(a, b.slice(i, i + a.length)) <= tol) return true;
+  return false;
+}
+// ¿Dos escrituras parecen el mismo artista?
+function mismoArtista(a, b) {
+  const x = compacto(a), y = compacto(b); if (!x || !y) return false;
+  if (x === y) return true;
+  if (Math.min(x.length, y.length) >= 5 && (x.includes(y) || y.includes(x))) return true;
+  const tol = Math.max(1, Math.floor(Math.max(x.length, y.length) * 0.2));
+  return lev(x, y) <= tol;
+}
+
+function variantes() {
+  const m = new Map();
+  for (const r of allRows) if (r.artista) m.set(r.artista, (m.get(r.artista) || 0) + 1);
+  return [...m].map(([v, n]) => ({ v, n }));
+}
+function nombreSel() {
+  const m = new Map(); for (const r of allRows) if (selArt.has(r.artista)) m.set(r.artista, (m.get(r.artista) || 0) + 1);
+  for (const v of selArt) if (!m.has(v)) m.set(v, 0);
+  return nice(best(m, mixed)) || 'el artista';
+}
+
+function opciones(q) {
+  const qk = key(q); if (!qk) return [];
+  const exact = [], fuzzy = [];
+  for (const o of variantes()) {
+    if (key(o.v).includes(qk)) exact.push(o);
+    else if (parecido(q, o.v)) fuzzy.push({ ...o, fuzzy: true });
+  }
+  const ord = (a, b) => b.n - a.n || a.v.localeCompare(b.v);
+  return [...exact.sort(ord), ...fuzzy.sort(ord)].slice(0, 30);
+}
+
+function abrirDD(abierto) { $('artdd').hidden = !abierto; $('artq').setAttribute('aria-expanded', String(abierto)); }
+
+function drawDD() {
+  const q = $('artq').value; const dd = $('artdd');
+  const items = opciones(q);
+  if (!q.trim()) { abrirDD(false); return; }
+  ddItems = [];
+  const nodes = [];
+  const libres = items.filter((o) => !selArt.has(o.v));
+  if (libres.length > 1) {
+    const all = el('div', 'opt all'); all.setAttribute('role', 'option'); all.id = 'opt-all';
+    all.append(el('span', '', '+'), el('span', '', `Seleccionar todas las coincidencias (${libres.length})`));
+    all.addEventListener('mousedown', (e) => { e.preventDefault(); libres.forEach((o) => selArt.add(o.v)); cambioSel(true); });
+    nodes.push(all); ddItems.push({ el: all, act: () => { libres.forEach((o) => selArt.add(o.v)); cambioSel(true); } });
+  }
+  items.forEach((o, i) => {
+    const on = selArt.has(o.v);
+    const row = el('div', 'opt' + (on ? ' on' : '')); row.setAttribute('role', 'option'); row.id = 'opt-' + i; row.setAttribute('aria-checked', String(on));
+    const nm = el('span'); nm.append(o.v); if (o.fuzzy) nm.append(el('span', 'hint', 'parecido'));
+    row.append(el('span', 'box', on ? '✓' : ''), nm, el('span', 'cnt', `${fmtN(o.n)} voto${o.n === 1 ? '' : 's'}`));
+    const act = () => { selArt.has(o.v) ? selArt.delete(o.v) : selArt.add(o.v); cambioSel(false); };
+    row.addEventListener('mousedown', (e) => { e.preventDefault(); act(); });
+    nodes.push(row); ddItems.push({ el: row, act });
+  });
+  if (!items.length) nodes.push(el('div', 'dd-empty', 'No hay artistas que coincidan con lo que escribiste.'));
+  dd.replaceChildren(...nodes);
+  ddActive = Math.min(ddActive, ddItems.length - 1);
+  marcarActivo(); abrirDD(true);
+}
+function marcarActivo() {
+  ddItems.forEach((it, i) => it.el.setAttribute('aria-selected', String(i === ddActive)));
+  const act = ddItems[ddActive]; $('artq').setAttribute('aria-activedescendant', act ? act.el.id : '');
+  if (act) act.el.scrollIntoView({ block: 'nearest' });
+}
+
+function drawTags() {
+  const box = $('tags');
+  box.replaceChildren(...[...selArt].map((v) => {
+    const t = el('span', 'tag'); t.append(v);
+    const x = el('button', '', '×'); x.type = 'button'; x.setAttribute('aria-label', 'Quitar ' + v);
+    x.addEventListener('click', (e) => { e.stopPropagation(); selArt.delete(v); cambioSel(false); });
+    t.append(x); return t;
+  }));
+  $('artclear').hidden = selArt.size === 0;
+  $('artq').placeholder = selArt.size ? 'Agregar otra escritura…' : 'Filtrar por artista: escribe un nombre…';
+}
+
+function drawVariantes() {
+  const cnt = new Map(); for (const r of state.dateRows) if (selArt.has(r.artista)) cnt.set(r.artista, (cnt.get(r.artista) || 0) + 1);
+  $('variantes').replaceChildren(...[...selArt].sort((a, b) => (cnt.get(b) || 0) - (cnt.get(a) || 0)).map((v) => {
+    const r = el('div', 'vrow'); const n = cnt.get(v) || 0;
+    r.append(el('span', '', v), el('span', '', `${fmtN(n)} voto${n === 1 ? '' : 's'}`)); return r;
+  }));
+}
+function drawSugerencias() {
+  const sel = [...selArt];
+  const sug = variantes().filter((o) => !selArt.has(o.v) && sel.some((s) => mismoArtista(s, o.v))).sort((a, b) => b.n - a.n).slice(0, 12);
+  $('sugs').hidden = !sug.length;
+  $('sugchips').replaceChildren(...sug.map((o) => {
+    const b = el('button', '', `+ ${o.v} (${o.n})`); b.type = 'button';
+    b.addEventListener('click', () => { selArt.add(o.v); cambioSel(false); });
+    return b;
+  }));
+}
+
+function guardarHash() {
+  const h = selArt.size ? '#artista=' + [...selArt].map(encodeURIComponent).join('|') : '';
+  try { history.replaceState(null, '', location.pathname + location.search + h); } catch (e) {}
+}
+function leerHash() {
+  const m = location.hash.match(/^#artista=(.*)$/);
+  if (m) selArt = new Set(m[1].split('|').map((x) => { try { return decodeURIComponent(x); } catch (e) { return x; } }).filter(Boolean));
+}
+
+function cambioSel(limpiar) {
+  if (limpiar) { $('artq').value = ''; abrirDD(false); }
+  drawTags(); guardarHash(); aplicarFiltro();
+  if (!$('artdd').hidden) drawDD();
+}
+
+$('artq').addEventListener('input', () => { ddActive = -1; drawDD(); });
+$('artq').addEventListener('focus', () => { if ($('artq').value.trim()) drawDD(); });
+$('artq').addEventListener('blur', () => setTimeout(() => abrirDD(false), 120));
+$('artq').addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowDown') { e.preventDefault(); if ($('artdd').hidden) drawDD(); ddActive = Math.min(ddItems.length - 1, ddActive + 1); marcarActivo(); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); ddActive = Math.max(0, ddActive - 1); marcarActivo(); }
+  else if (e.key === 'Enter') { e.preventDefault(); const it = ddItems[ddActive] || ddItems.find((x) => x.el.id !== 'opt-all'); if (it) it.act(); }
+  else if (e.key === 'Escape') { abrirDD(false); }
+  else if (e.key === 'Backspace' && !$('artq').value && selArt.size) { selArt.delete([...selArt].at(-1)); cambioSel(false); }
+});
+$('artbox').addEventListener('click', () => $('artq').focus());
+$('artclear').addEventListener('click', (e) => { e.stopPropagation(); selArt.clear(); $('artq').value = ''; cambioSel(true); });
+leerHash(); drawTags();
+
+// ===== Ficha del artista (Wikidata + Wikipedia + Deezer) =====
+const fichaCache = new Map();
+let fichaActual = '', fichaElegida = new Map(); // nombre -> id de Wikidata elegido a mano
+const WD = 'https://www.wikidata.org/w/api.php?format=json&origin=*&';
+const MUSICA = new Set(['Q177220', 'Q639669', 'Q488205', 'Q36834', 'Q753110', 'Q2252262', 'Q130857', 'Q183945', 'Q855091', 'Q386854', 'Q158852', 'Q2643890', 'Q1259917', 'Q215380', 'Q2088357', 'Q216337', 'Q641066', 'Q5741069', 'Q9212979', 'Q56816954']);
+const claim = (c, p) => (c[p] || []).map((v) => v.mainsnak?.datavalue?.value).filter((v) => v != null);
+const getJSON = (u) => fetch(u).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); });
+function jsonp(url, ms = 7000) {
+  return new Promise((res) => {
+    const cb = 'dz' + Math.random().toString(36).slice(2); const sc = document.createElement('script');
+    const fin = (v) => { delete window[cb]; sc.remove(); res(v); };
+    window[cb] = fin; sc.onerror = () => fin(null); sc.src = url + (url.includes('?') ? '&' : '?') + 'output=jsonp&callback=' + cb;
+    document.head.appendChild(sc); setTimeout(() => fin(null), ms);
+  });
+}
+
+async function buscarFicha(nombre, idForzado) {
+  const s = await getJSON(WD + 'action=wbsearchentities&type=item&limit=7&language=es&uselang=es&search=' + encodeURIComponent(nombre));
+  const ids = (s.search || []).map((x) => x.id);
+  if (idForzado && !ids.includes(idForzado)) ids.unshift(idForzado);
+  if (!ids.length) return { candidatos: [] };
+  const e = await getJSON(WD + 'action=wbgetentities&props=claims|sitelinks|labels|descriptions&languages=es|en|mul&ids=' + ids.join('|'));
+  const cand = ids.map((id, i) => {
+    const en = e.entities[id]; if (!en || !en.claims) return null; const c = en.claims;
+    let pts = 0;
+    if (c.P1902) pts += 3; if (c.P434) pts += 2; if (c.P2722) pts += 1;
+    if ([...claim(c, 'P106'), ...claim(c, 'P31')].some((v) => MUSICA.has(v.id))) pts += 2;
+    return pts > 0 ? { id, en, pts, orden: i } : null;
+  }).filter(Boolean).sort((a, b) => b.pts - a.pts || a.orden - b.orden);
+  if (!cand.length) return { candidatos: [] };
+  const elegido = cand.find((x) => x.id === idForzado) || cand[0];
+  const en = elegido.en, c = en.claims;
+  const etiqueta = (x) => x?.labels?.es?.value || x?.labels?.en?.value || x?.labels?.mul?.value || '';
+  // Etiquetas de géneros y país
+  const generos = claim(c, 'P136').map((v) => v.id).slice(0, 3);
+  const paises = (claim(c, 'P495').length ? claim(c, 'P495') : claim(c, 'P27')).map((v) => v.id).slice(0, 2);
+  const extra = [...generos, ...paises].filter(Boolean);
+  const lab = extra.length ? (await getJSON(WD + 'action=wbgetentities&props=labels&languages=es|en|mul&ids=' + extra.join('|'))).entities : {};
+  // Resumen de Wikipedia (español, si no inglés)
+  let wiki = null;
+  for (const lang of ['es', 'en']) {
+    const t = en.sitelinks?.[lang + 'wiki']?.title; if (!t) continue;
+    try { const w = await getJSON(`https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(t.replace(/ /g, '_'))}`); wiki = { ...w, lang, title: t }; break; } catch (err) {}
+  }
+  // Fans en Deezer
+  let deezer = null; const dz = claim(c, 'P2722')[0];
+  if (dz) deezer = await jsonp(`https://api.deezer.com/artist/${encodeURIComponent(dz)}`);
+  else { const r = await jsonp(`https://api.deezer.com/search/artist?limit=3&q=${encodeURIComponent(nombre)}`); const lbl = etiqueta(en); deezer = r?.data?.find((a) => key(a.name) === key(nombre) && (!lbl || key(a.name) === key(lbl))) || null; }
+  const anio = (v) => v?.time ? v.time.slice(1, 5) : null;
+  return {
+    id: elegido.id, nombre: etiqueta(en) || nombre, buscado: nombre,
+    desc: en.descriptions?.es?.value || en.descriptions?.en?.value || '',
+    texto: wiki?.extract || '', foto: wiki?.thumbnail?.source || '', wikiUrl: wiki?.content_urls?.desktop?.page || '',
+    generos: generos.map((g) => etiqueta(lab[g])).filter(Boolean),
+    pais: paises.map((x) => etiqueta(lab[x])).filter(Boolean).join(' / '),
+    nacio: anio(claim(c, 'P569')[0]), desde: anio(claim(c, 'P571')[0] || claim(c, 'P2031')[0]),
+    fans: deezer?.nb_fan || null, deezerUrl: deezer?.link || (dz ? `https://www.deezer.com/artist/${dz}` : ''),
+    spotify: claim(c, 'P1902')[0] || '', instagram: claim(c, 'P2003')[0] || '', x: claim(c, 'P2002')[0] || '',
+    tiktok: claim(c, 'P7085')[0] || '', youtube: claim(c, 'P2397')[0] || '', facebook: claim(c, 'P2013')[0] || '',
+    apple: claim(c, 'P2850')[0] || '', web: claim(c, 'P856')[0] || '',
+    candidatos: cand.map((x) => ({ id: x.id, nombre: etiqueta(x.en), desc: x.en.descriptions?.es?.value || x.en.descriptions?.en?.value || '' })),
+  };
+}
+
+// Íconos genéricos (no son los logos oficiales de cada marca)
+const ICONOS = {
+  musica: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+  camara: '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor"/>',
+  video: '<rect x="2" y="5" width="20" height="14" rx="4"/><path d="m10 9 5 3-5 3z" fill="currentColor"/>',
+  nota: '<path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 3c.5 2.5 2.5 4.5 5 5"/>',
+  chat: '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>',
+  personas: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.2a5 5 0 0 1 5.5 5.8"/>',
+  web: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+  buscar: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+};
+function link(texto, url, color, icono = 'web', oscuro = false) {
+  const a = el('a', 'fi-red'); a.href = url; a.target = '_blank'; a.rel = 'noopener'; a.title = 'Abrir ' + texto + ' en una pestaña nueva';
+  const i = el('span', 'ico'); if (color) i.style.setProperty('--c', color);
+  i.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="${oscuro ? '#111' : '#fff'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONOS[icono] || ICONOS.web}</svg>`;
+  const ext = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); ext.setAttribute('viewBox', '0 0 24 24'); ext.setAttribute('class', 'ext'); ext.setAttribute('aria-hidden', 'true');
+  ext.innerHTML = '<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
+  a.append(i, texto, ext); return a;
+}
+
+function pintarFicha(nombre, f) {
+  const box = $('ficha'); const q = encodeURIComponent(nombre);
+  const buscar = el('div', 'fi-redes');
+  buscar.append(link('Buscar en Google', `https://www.google.com/search?q=${q}`, '#4285f4', 'buscar'), link('Buscar en Spotify', `https://open.spotify.com/search/${q}`, '#1db954', 'musica'), link('Buscar en YouTube', `https://www.youtube.com/results?search_query=${q}`, '#ff0033', 'video'), link('Buscar en Instagram', `https://www.google.com/search?q=${q}+site%3Ainstagram.com`, '#d6246e', 'camara'));
+  if (!f || !f.id) {
+    const p = el('p', 'fi-texto', `No encontramos una ficha pública de "${nombre}" en Wikipedia. Puede ser un artista emergente, local o un nombre mal escrito. Estas búsquedas te pueden ayudar:`);
+    box.replaceChildren(p, buscar); return;
+  }
+  const izq = el('div');
+  const redes = el('div', 'fi-redes');
+  const head = el('div', 'fi-head');
+  if (f.foto) { const img = el('img', 'fi-foto'); img.src = f.foto; img.alt = f.nombre; img.loading = 'lazy'; head.append(img); }
+  else head.append(el('div', 'fi-foto vacia', f.nombre.slice(0, 1).toUpperCase()));
+  const t = el('div'); t.append(el('h3', 'fi-nombre', f.nombre)); if (f.desc) t.append(el('p', 'fi-desc', f.desc)); head.append(t);
+  izq.append(head);
+  izq.append(redes);
+  if (key(f.nombre) !== key(nombre) && !key(f.nombre).includes(key(nombre))) {
+    izq.append(el('p', 'fi-desc', `Coincidencia aproximada: encontramos «${f.nombre}» al buscar «${nombre}». Si no es el artista correcto, revisa las otras opciones o los enlaces de búsqueda.`));
+  }
+  if (f.texto) izq.append(el('p', 'fi-texto', f.texto.length > 520 ? f.texto.slice(0, 520).replace(/\s\S*$/, '') + '…' : f.texto));
+  const datos = el('div', 'fi-datos');
+  const dato = (lbl, val) => { const d = el('span', 'fi-dato'); d.append(lbl + ': ', el('b', '', val)); datos.append(d); };
+  if (f.generos.length) dato('Género', f.generos.join(', '));
+  if (f.pais) dato('País', f.pais);
+  if (f.nacio) dato('Nació en', f.nacio);
+  if (f.desde) dato('Activo desde', f.desde);
+  if (f.fans) dato('Fans en Deezer', d3.format(',')(f.fans));
+  if (datos.childNodes.length) izq.append(datos);
+  if (f.spotify) redes.append(link('Spotify', `https://open.spotify.com/artist/${f.spotify}`, '#1db954', 'musica'));
+  if (f.instagram) redes.append(link('Instagram', `https://www.instagram.com/${f.instagram}/`, '#d6246e', 'camara'));
+  if (f.tiktok) redes.append(link('TikTok', `https://www.tiktok.com/@${f.tiktok}`, '#25f4ee', 'nota', true));
+  if (f.youtube) redes.append(link('YouTube', `https://www.youtube.com/channel/${f.youtube}`, '#ff0033', 'video'));
+  if (f.x) redes.append(link('X (Twitter)', `https://x.com/${f.x}`, '#ffffff', 'chat', true));
+  if (f.facebook) redes.append(link('Facebook', `https://www.facebook.com/${f.facebook}`, '#1877f2', 'personas'));
+  if (f.apple) redes.append(link('Apple Music', `https://music.apple.com/artist/${f.apple}`, '#fa2d48', 'musica'));
+  if (f.deezerUrl) redes.append(link('Deezer', f.deezerUrl, '#a238ff', 'musica'));
+  if (f.web) redes.append(link('Web oficial', f.web, '#00e0b1', 'web', true));
+  redes.append(link('Buscar en Google', `https://www.google.com/search?q=${q}`, '#4285f4', 'buscar'));
+  if (!f.instagram) redes.append(link('Buscar Instagram', `https://www.google.com/search?q=${q}+site%3Ainstagram.com`, '#d6246e', 'camara'));
+  if (!f.tiktok) redes.append(link('Buscar TikTok', `https://www.google.com/search?q=${q}+site%3Atiktok.com`, '#25f4ee', 'nota', true));
+  // ¿Es otro artista con el mismo nombre?
+  const otros = f.candidatos.filter((c) => c.id !== f.id).slice(0, 4);
+  if (otros.length) {
+    const alt = el('div', 'fi-alt'); alt.append('¿No es este artista? Prueba con: ');
+    otros.forEach((c) => { const b = el('button', '', c.nombre + (c.desc ? ` (${c.desc})` : '')); b.type = 'button';
+      b.addEventListener('click', () => { fichaElegida.set(key(nombre), c.id); cargarFicha(nombre, true); }); alt.append(b); });
+    izq.append(alt);
+  }
+  const fuente = el('div', 'fi-fuente'); fuente.append('Fuente: ');
+  const wd = el('a', '', 'Wikidata'); wd.href = `https://www.wikidata.org/wiki/${f.id}`; wd.target = '_blank'; wd.rel = 'noopener'; fuente.append(wd);
+  if (f.wikiUrl) { const w = el('a', '', 'Wikipedia'); w.href = f.wikiUrl; w.target = '_blank'; w.rel = 'noopener'; fuente.append(' · ', w); }
+  if (f.fans) fuente.append(' · Deezer');
+  izq.append(fuente);
+  const grid = el('div', 'ficha'); grid.append(izq);
+  if (f.spotify) {
+    const sp = el('div', 'fi-spotify'); const fr = document.createElement('iframe');
+    fr.src = `https://open.spotify.com/embed/artist/${f.spotify}?theme=0`; fr.loading = 'lazy'; fr.title = 'Canciones de ' + f.nombre + ' en Spotify';
+    fr.allow = 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'; sp.append(fr); grid.append(sp);
+  }
+  box.replaceChildren(grid);
+}
+
+async function cargarFicha(nombre, forzar) {
+  const k = key(nombre) + '|' + (fichaElegida.get(key(nombre)) || '');
+  if (!forzar && k === fichaActual) return; // ya se muestra (evita recargar en cada actualización)
+  fichaActual = k;
+  if (fichaCache.has(k)) { pintarFicha(nombre, fichaCache.get(k)); return; }
+  $('ficha').replaceChildren(el('div', 'fi-load', `Buscando información de ${nombre}…`));
+  let f = null;
+  try { f = await buscarFicha(nombre, fichaElegida.get(key(nombre))); fichaCache.set(k, f); } catch (e) { console.error(e); }
+  if (fichaActual === k) pintarFicha(nombre, f);
+}
 
 // ===== Carga =====
 let lastLoad = null;
